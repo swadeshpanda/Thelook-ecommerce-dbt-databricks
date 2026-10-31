@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: fct_order_items
+    description: One row per item sold, with real unit cost and gross profit.
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
+      - name: sale_price
+        data_tests: [not_null]
+
+  - name: fct_orders
+    description: One row per order, with revenue and profit rolled up from items.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+
+  - name: dim_customers
+    description: One row per customer, with lifetime orders, revenue and repeat-buyer flag.
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+
+  - name: dim_products
+    description: One row per product, with unit margin and distribution center.
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+
+  - name: mart_monthly_sales
+    description: Monthly revenue, profit, average order value and order counts by status.
+    columns:
+      - name: order_month
+        data_tests: [unique, not_null]
+
+  - name: mart_category_performance
+    description: Revenue, profit margin and return rate per department and category.
