@@ -1,0 +1,16 @@
+version: 2
+
+exposures:
+  - name: thelook_sales_dashboard
+    label: TheLook Sales Dashboard
+    type: dashboard
+    maturity: medium
+    url: https://dbc-7956b83a-2a69.cloud.databricks.com/dashboardsv3/01f1d581b7c817cdaf5744fc174696e4/published?o=7474658149914919
+    description: Monthly sales trend, category performance and customer KPIs.
+    owner:
+      name: Swadesh Ranjan Panda
+    depends_on:
+      - ref('mart_monthly_sales')
+      - ref('mart_category_performance')
+      - ref('dim_customers')
+      - ref('fct_orders')
