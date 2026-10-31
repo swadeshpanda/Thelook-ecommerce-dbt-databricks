@@ -1,0 +1,104 @@
+version: 2
+
+models:
+  - name: stg_thelook__orders
+    description: Cleaned orders. Grain is one row per order.
+    columns:
+      - name: order_id
+        description: Primary key of the order.
+        data_tests: [unique, not_null]
+      - name: user_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_thelook__users')
+                field: user_id
+      - name: order_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: "{{ var('order_statuses') }}"
+
+  - name: stg_thelook__order_items
+    description: Cleaned order items. Grain is one row per item sold.
+    columns:
+      - name: order_item_id
+        description: Primary key of the order item.
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_thelook__orders')
+                field: order_id
+      - name: product_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_thelook__products')
+                field: product_id
+      - name: inventory_item_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_thelook__inventory_items')
+                field: inventory_item_id
+      - name: item_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: "{{ var('order_statuses') }}"
+      - name: sale_price
+        data_tests: [not_null]
+
+  - name: stg_thelook__products
+    description: Product catalogue. Grain is one row per product.
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+      - name: distribution_center_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_thelook__distribution_centers')
+                field: distribution_center_id
+
+  - name: stg_thelook__users
+    description: Customers, with PII removed. Grain is one row per customer.
+    columns:
+      - name: user_id
+        data_tests: [unique, not_null]
+
+  - name: stg_thelook__inventory_items
+    description: Physical stock units, with the actual unit cost. Grain is one row per unit.
+    columns:
+      - name: inventory_item_id
+        data_tests: [unique, not_null]
+      - name: product_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_thelook__products')
+                field: product_id
+
+  - name: stg_thelook__distribution_centers
+    description: Warehouses. Grain is one row per distribution center.
+    columns:
+      - name: distribution_center_id
+        data_tests: [unique, not_null]
+
+  - name: stg_thelook__events
+    description: Website events. Grain is one row per event. user_id is null for anonymous visitors.
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: user_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_thelook__users')
+                field: user_id
+              config:
+                severity: warn
