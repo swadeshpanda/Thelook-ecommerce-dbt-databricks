@@ -2,36 +2,79 @@ version: 2
 
 models:
   - name: fct_order_items
-    description: One row per item sold, with real unit cost and gross profit.
+    description: >
+      One row per item sold. Central fact table for revenue and profit.
+      Cost comes from inventory_items (the cost of the actual unit sold).
     columns:
       - name: order_item_id
+        description: Primary key.
         data_tests: [unique, not_null]
+      - name: order_id
+        description: Order the item belongs to.
       - name: sale_price
+        description: Price the customer paid for this item.
         data_tests: [not_null]
+      - name: cost
+        description: Cost of the specific inventory unit sold.
+      - name: gross_profit
+        description: sale_price minus cost.
+      - name: days_to_deliver
+        description: Days between order creation and delivery. Null if not delivered.
+      - name: is_returned
+        description: True if the item was returned.
 
   - name: fct_orders
-    description: One row per order, with revenue and profit rolled up from items.
+    description: One row per order, with revenue and profit rolled up from its items.
     columns:
       - name: order_id
+        description: Primary key.
         data_tests: [unique, not_null]
+      - name: order_revenue
+        description: Sum of sale_price of all items in the order.
+      - name: order_profit
+        description: Sum of gross_profit of all items in the order.
+      - name: is_valid_order
+        description: True unless the order was Cancelled or Returned. Used for all revenue KPIs.
 
   - name: dim_customers
-    description: One row per customer, with lifetime orders, revenue and repeat-buyer flag.
+    description: One row per customer, with lifetime purchase stats. PII excluded.
     columns:
       - name: user_id
+        description: Primary key.
         data_tests: [unique, not_null]
+      - name: age_group
+        description: Age bucket used for segmentation.
+      - name: lifetime_orders
+        description: Number of valid orders placed.
+      - name: lifetime_revenue
+        description: Revenue from valid orders.
+      - name: is_repeat_customer
+        description: True if the customer has more than one valid order.
 
   - name: dim_products
     description: One row per product, with unit margin and distribution center.
     columns:
       - name: product_id
+        description: Primary key.
         data_tests: [unique, not_null]
+      - name: unit_margin
+        description: Catalogue retail_price minus catalogue cost.
 
   - name: mart_monthly_sales
-    description: Monthly revenue, profit, average order value and order counts by status.
+    description: >
+      One row per month. Revenue, profit and average order value count valid orders only.
+      Status count columns are generated from var('order_statuses').
     columns:
       - name: order_month
+        description: First day of the month.
         data_tests: [unique, not_null]
+      - name: avg_order_value
+        description: Revenue divided by the number of valid orders.
 
   - name: mart_category_performance
-    description: Revenue, profit margin and return rate per department and category.
+    description: One row per department and category. Revenue, profit margin and return rate, excluding cancelled items.
+    columns:
+      - name: profit_margin
+        description: gross_profit / revenue, rounded to 3 decimals.
+      - name: return_rate
+        description: Share of items returned, rounded to 3 decimals.
