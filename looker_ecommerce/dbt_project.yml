@@ -22,15 +22,24 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
 
+vars:
+  order_statuses: ['Complete', 'Shipped', 'Processing', 'Cancelled', 'Returned']
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
-# In this example config, we tell dbt to build all models in the example/
-# directory as views. These settings can be overridden in the individual model
-# files using the `{{ config(...) }}` macro.
+#Layer rules (applied to every model in each folder):
+#   staging      -> views,  1:1 cleanup of each raw source
+#   intermediate -> views,  reusable joins between staging models
+#   marts        -> tables, business-facing facts, dimensions and KPIs
 models:
   looker_ecommerce:
-    # Config indicated by + and applies to all files under models/example/
-    example:
+    staging:
       +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    marts:
+      +materialized: table
+      +schema: marts
