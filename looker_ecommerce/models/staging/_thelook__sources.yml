@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: thelook
+    description: Raw TheLook e-commerce tables loaded from Kaggle CSVs (see setup/01_load_raw.sql).
+    database: workspace
+    schema: thelook_raw
+    tables:
+      - name: orders
+      - name: order_items
+      - name: products
+      - name: users
+      - name: inventory_items
+      - name: distribution_centers
+      - name: events
