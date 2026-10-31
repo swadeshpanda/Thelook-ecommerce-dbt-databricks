@@ -8,3 +8,16 @@ wheels/
 
 # Virtual environments
 .venv
+
+# dbt build output
+target/
+dbt_packages/
+logs/
+.user.yml
+
+# Secrets
+.env
+profiles.yml
+
+# Data files (download from Kaggle)
+*.csv
