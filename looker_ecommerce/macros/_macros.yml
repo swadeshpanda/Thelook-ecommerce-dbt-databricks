@@ -1,0 +1,14 @@
+version: 2
+
+macros:
+  - name: count_orders_by_status
+    description: >
+      Generates one count-distinct column per order status, driven by the
+      order_statuses project variable. Avoids repeating the same CASE logic.
+    arguments:
+      - name: status_column
+        type: string
+        description: Column holding the status. Default order_status.
+      - name: id_column
+        type: string
+        description: Column to count distinctly. Default order_id.
