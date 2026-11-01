@@ -318,8 +318,10 @@ dbt docs generate && dbt docs serve        # browse docs and the lineage graph
 
 ## 🙌 Credits
 
-Based on DataCamp's *Case Study: Building E-Commerce Data Models with dbt*, rebuilt on Databricks and extended with Unity Catalog loading, a star schema, data quality checks, documentation and an AI/BI dashboard.
-Data: TheLook eCommerce dataset (Looker / Google), via Kaggle.
+- 📚 **Based on:** DataCamp's *Case Study: Building E-Commerce Data Models with dbt*
+- 🔧 **Rebuilt on:** Databricks (Unity Catalog, serverless SQL warehouse)
+- ➕ **Extended with:** Unity Catalog loading, a star schema, data quality checks, documentation and an AI/BI dashboard
+- 🗃️ **Data:** TheLook eCommerce dataset (Looker / Google), via Kaggle
 
 <div align="center">
 
